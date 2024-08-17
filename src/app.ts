@@ -1,8 +1,8 @@
 import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
-import {apiV1Route} from './routes/api_V1_route';
+import {createproductSrev} from './controller/prod_controller';
 import path from "path";
-
+const cors = require('cors');
 
 
 class App {
@@ -17,7 +17,7 @@ class App {
     }
     private config(): void {
         this.app.use(bodyParser.json());
-        //this.app.use(cors({origin: this.allowedOrigins, credentials: true}));
+        this.app.use(cors({origin: this.allowedOrigins, credentials: true}));
 
 
         this.app.use(bodyParser.urlencoded({extended: true}));
@@ -26,7 +26,7 @@ class App {
     }
 
     private allRoutes(): void {
-        this.app.use('/api/v1/items', apiV1Route);
+        this.app.use('/api/v1/items', createproductSrev);//
         this.app.use((req: Request, res: Response) => {
             res.sendFile(path.join(__dirname, '../public/index.html'));
         });
