@@ -1,5 +1,5 @@
 import {checkValidationInMiddleWare, idValid, postIdValidMid, textValidMiddleware} from "../midleware/validator";
-import {Commit, Customer, Post} from '../models/modelsDb';
+import {Product, OldPrice, Cost} from '../models/modelsDb';
 import {Op} from "sequelize";
 import express, {Express, NextFunction, Request, Response, Router} from 'express';
 import * as fs from "fs";
@@ -18,7 +18,7 @@ router.post('/', textValidMiddleware(), checkValidationInMiddleWare, async (req:
          success: true,
          errors_message: null,
          data: result,
-      } as ApiResponseServ<Post>);
+      } as ApiResponseServ<Cost>);
    } catch (e) {
       console.log("post-", e);
       res.status(409).send({

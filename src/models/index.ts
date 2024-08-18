@@ -1,12 +1,12 @@
 const Sequelize = require("sequelize");
 import {sequelize} from './indexDb'
-import {Commit,Post,Customer} from './modelsDb';
+import {Product,Cost,OldPrice} from './modelsDb';
 
 export const db = {
     Sequelize : Sequelize,
     sequelize,
-    posts : new Post(sequelize, Sequelize),
-    commits : new Commit(sequelize, Sequelize),
-    customers : new Customer(sequelize, Sequelize),
+    posts : new Cost(sequelize, Sequelize),
+    commits : new Product(sequelize, Sequelize),
+    customers : new OldPrice(sequelize, Sequelize),
 };
 

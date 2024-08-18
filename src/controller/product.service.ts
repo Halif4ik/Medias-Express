@@ -1,12 +1,12 @@
-import {Post} from "../models/modelsDb";
+import {Cost} from "../models/modelsDb";
 import {HttpException} from "../interceptor/api.response.dto";
 
 export class ProductService {
    private readonly arrHexsFaces = ['👩‍🦰'.codePointAt(0), '👨‍🦲'.codePointAt(0), '👲'.codePointAt(0), `👧`.codePointAt(0)];
 
-   async createUser(reqBody): Promise<Post> {
+   async createUser(reqBody): Promise<Cost> {
       try {
-         const postItem: Post[] = await Post.bulkCreate([{
+         const postItem: Cost[] = await Cost.bulkCreate([{
             checked: reqBody.done === 'true',
             text: reqBody.text,
             CustomerId: req.session.customer[0].id,

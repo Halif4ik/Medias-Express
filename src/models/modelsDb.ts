@@ -1,77 +1,78 @@
 import {DataTypes, Model} from 'sequelize'
 import {sequelize} from './indexDb';
 
-export class Commit extends Model {
+export class Product extends Model {
 }
 
-Commit.init(
+Product.init(
     {
-        id: {
-            primaryKey: true,
-            autoIncrement: true,
-            type: DataTypes.SMALLINT.UNSIGNED,
-        },
-        CustomerId: {type: DataTypes.TINYINT.UNSIGNED},
-        checkedCom: {type: DataTypes.BOOLEAN},
-        children_comment_id: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
-        post_id: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-        text: {allowNull: false, type: DataTypes.STRING(500)},
-        attachedFile: { type: DataTypes.STRING},
+       id: {
+          primaryKey: true,
+          autoIncrement: true,
+          type: DataTypes.SMALLINT.UNSIGNED,
+       },
+       name: {allowNull: false, type: DataTypes.STRING(500)},
     },
-    {sequelize, tableName: 'ComentsList'}
+    {
+       sequelize,
+       timestamps: true,
+       tableName: 'product'
+    }
 );
 
-export class Customer extends Model {
+export class OldPrice extends Model {
 }
-Customer.init({
-    id: {
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        type: DataTypes.TINYINT.UNSIGNED
-    },
-    login: {allowNull: false, unique: true, type: DataTypes.STRING},
-    pass: {allowNull: false, type: DataTypes.STRING},
-    csrf: {allowNull: false, type: DataTypes.STRING},
-    userName: {allowNull: false, type: DataTypes.STRING},
-    homePage: {allowNull: true, type: DataTypes.STRING},
-    face: {allowNull: true, type: DataTypes.INTEGER},
-
+OldPrice.init({
+   id: {
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+      type: DataTypes.SMALLINT.UNSIGNED
+   },
+   restProduct: {allowNull: false, unique: true, type: DataTypes.INTEGER.UNSIGNED},
+   price: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
+   yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   postId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   month: {
+      allowNull: false,
+      type: DataTypes.TINYINT.UNSIGNED
+   },
+   year: {
+      allowNull: false,
+      type: DataTypes.TINYINT.UNSIGNED
+   },
 }, {
-    timestamps: false,
-    sequelize: sequelize,
-    tableName: 'customer_list',
+   timestamps: true,
+   sequelize: sequelize,
+   tableName: 'old_price',
 });
-export class Post extends Model {
+
+export class Cost extends Model {
 }
 
-Post.init({
-    id: {
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        type: DataTypes.SMALLINT.UNSIGNED
-    },
-    checked: {type: DataTypes.BOOLEAN},
-    text: {allowNull: false, type: DataTypes.STRING(500)},
-    editable: {allowNull: true, type: DataTypes.BOOLEAN},
-    attachedFile: {allowNull: true, type: DataTypes.STRING},
-    /*  creator: {*/
-    CustomerId: {type: DataTypes.TINYINT.UNSIGNED},
-    login: {allowNull: true, type: DataTypes.STRING},
-    userName: {allowNull: false, type: DataTypes.STRING},
-    face: {allowNull: true, type: DataTypes.INTEGER.UNSIGNED},
+Cost.init({
+   id: {
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+      type: DataTypes.SMALLINT.UNSIGNED
+   },
+   postId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   costProduct: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
 
 }, {sequelize, tableName: 'PostsList'});
 
-Customer.hasMany(Commit);
-Customer.hasMany(Post);
+OldPrice.hasMany(Product);
+OldPrice.hasMany(Cost);
 
 
-Post.hasMany(Commit, {as: 'Commits', foreignKey: 'post_id'});
-Post.belongsTo(Customer, {as: 'Customers', foreignKey: 'CustomerId'});
+Cost.hasMany(Product, {as: 'Commits', foreignKey: 'post_id'});
+Cost.belongsTo(OldPrice, {as: 'Customers', foreignKey: 'CustomerId'});
 
-Commit.belongsTo(Post, {as: 'Posts', foreignKey: 'post_id'});
-Commit.belongsTo(Customer, {as: 'Customers', foreignKey: 'CustomerId'});
-Commit.belongsTo(Commit, {foreignKey: 'children_comment_id', as: 'Parent'});
-Commit.hasMany(Commit, {foreignKey: 'children_comment_id', as: 'Children'});
+Product.belongsTo(Cost, {as: 'Posts', foreignKey: 'post_id'});
+Product.belongsTo(OldPrice, {as: 'Customers', foreignKey: 'CustomerId'});
+Product.belongsTo(Product, {foreignKey: 'children_comment_id', as: 'Parent'});
+Product.hasMany(Product, {foreignKey: 'children_comment_id', as: 'Children'});
