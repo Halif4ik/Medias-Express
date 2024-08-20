@@ -3,7 +3,6 @@ import {sequelize} from './indexDb';
 
 export class Product extends Model {
 }
-
 Product.init(
     {
        id: {
@@ -12,8 +11,8 @@ Product.init(
           type: DataTypes.SMALLINT.UNSIGNED,
        },
        name: {allowNull: false, type: DataTypes.STRING(500)},
-       costsId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
-       oldPricesId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+      /* costsId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+       oldPricesId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},*/
     },
     {
        sequelize,
@@ -33,17 +32,12 @@ OldPrice.init({
    },
    restProduct: {allowNull: false, unique: true, type: DataTypes.INTEGER.UNSIGNED},
    price: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
-   yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-   monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    prodId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-   month: {
+   /*monthId: {allowNull: false, type: DataTypes.TINYINT.UNSIGNED},
+   yearId: {
       allowNull: false,
       type: DataTypes.TINYINT.UNSIGNED
-   },
-   year: {
-      allowNull: false,
-      type: DataTypes.TINYINT.UNSIGNED
-   },
+   },*/
 }, {
    timestamps: true,
    sequelize: sequelize,
@@ -60,11 +54,11 @@ Cost.init({
       type: DataTypes.SMALLINT.UNSIGNED
    },
    prodId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-   yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-   monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+  /* yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},*/
    costProduct: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
 
-}, {sequelize, tableName: 'PostsList'});
+}, {sequelize, tableName: 'cost'});
 
 export class Year extends Model {
 }
@@ -85,7 +79,7 @@ Year.init(
        tableName: 'year'
     }
 );
-/*
+
 export class Month extends Model {
 }
 Month.init(
@@ -102,28 +96,28 @@ Month.init(
     {
        sequelize,
        timestamps: true,
-       tableName: 'year'
+       tableName: 'month'
     }
-);*/
+);
 
 /*relations one to many Product-> OldPrice*/
 Product.hasMany(OldPrice);
 OldPrice.belongsTo(Product, {as: 'oldPrices', foreignKey: 'prodId'});
 /*relations one to many Product-> Cost*/
-Product.hasMany(Cost, {foreignKey: 'costsId'});
+Product.hasMany(Cost);
 Cost.belongsTo(Product, {as: 'costs', foreignKey: 'prodId'});
 
 /*oldPrice table*/
-Year.hasMany(OldPrice,{foreignKey: 'oldPriceId'});
-OldPrice.belongsTo(Year, { foreignKey: 'yearId'});
-/*Month.hasMany(OldPrice,{foreignKey: 'oldPriceId'});
-OldPrice.belongsTo(Month, {targetKey: 'id', foreignKey: 'monthId'});*/
+Year.hasMany(OldPrice);
+OldPrice.belongsTo(Year);
+Month.hasMany(OldPrice);
+OldPrice.belongsTo(Month);
 
 /*cost tab*/
-Year.hasMany(Cost,{foreignKey: 'costsId'});
-Cost.belongsTo(Year, {foreignKey: 'yearId'});
-/*Month.hasMany(Cost,{foreignKey: 'costsId'});
-Cost.belongsTo(Month, {targetKey: 'id', foreignKey: 'monthId'});*/
+Year.hasMany(Cost);
+Cost.belongsTo(Year);
+Month.hasMany(Cost);
+Cost.belongsTo(Month);
 
 
 
