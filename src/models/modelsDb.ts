@@ -12,6 +12,8 @@ Product.init(
           type: DataTypes.SMALLINT.UNSIGNED,
        },
        name: {allowNull: false, type: DataTypes.STRING(500)},
+       costsId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+       oldPricesId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
     },
     {
        sequelize,
@@ -33,7 +35,7 @@ OldPrice.init({
    price: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
    yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
-   postId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   prodId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    month: {
       allowNull: false,
       type: DataTypes.TINYINT.UNSIGNED
@@ -50,7 +52,6 @@ OldPrice.init({
 
 export class Cost extends Model {
 }
-
 Cost.init({
    id: {
       primaryKey: true,
@@ -58,21 +59,72 @@ Cost.init({
       allowNull: false,
       type: DataTypes.SMALLINT.UNSIGNED
    },
-   postId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
+   prodId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    yearId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    monthId: {allowNull: false, type: DataTypes.SMALLINT.UNSIGNED},
    costProduct: {allowNull: false, type: DataTypes.DOUBLE.UNSIGNED},
 
 }, {sequelize, tableName: 'PostsList'});
 
-OldPrice.hasMany(Product);
-OldPrice.hasMany(Cost);
+export class Year extends Model {
+}
+Year.init(
+    {
+       id: {
+          primaryKey: true,
+          autoIncrement: true,
+          type: DataTypes.TINYINT.UNSIGNED,
+       },
+       yearNumber: {allowNull: false, type: DataTypes.TINYINT.UNSIGNED},
+       costsId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+       oldPriceId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+    },
+    {
+       sequelize,
+       timestamps: true,
+       tableName: 'year'
+    }
+);
+/*
+export class Month extends Model {
+}
+Month.init(
+    {
+       id: {
+          primaryKey: true,
+          autoIncrement: true,
+          type: DataTypes.TINYINT.UNSIGNED,
+       },
+       monthNumber: {allowNull: false, type: DataTypes.TINYINT.UNSIGNED},
+       costsId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+       oldPriceId: {allowNull: true, type: DataTypes.SMALLINT.UNSIGNED},
+    },
+    {
+       sequelize,
+       timestamps: true,
+       tableName: 'year'
+    }
+);*/
+
+/*relations one to many Product-> OldPrice*/
+Product.hasMany(OldPrice);
+OldPrice.belongsTo(Product, {as: 'oldPrices', foreignKey: 'prodId'});
+/*relations one to many Product-> Cost*/
+Product.hasMany(Cost, {foreignKey: 'costsId'});
+Cost.belongsTo(Product, {as: 'costs', foreignKey: 'prodId'});
+
+/*oldPrice table*/
+Year.hasMany(OldPrice,{foreignKey: 'oldPriceId'});
+OldPrice.belongsTo(Year, { foreignKey: 'yearId'});
+/*Month.hasMany(OldPrice,{foreignKey: 'oldPriceId'});
+OldPrice.belongsTo(Month, {targetKey: 'id', foreignKey: 'monthId'});*/
+
+/*cost tab*/
+Year.hasMany(Cost,{foreignKey: 'costsId'});
+Cost.belongsTo(Year, {foreignKey: 'yearId'});
+/*Month.hasMany(Cost,{foreignKey: 'costsId'});
+Cost.belongsTo(Month, {targetKey: 'id', foreignKey: 'monthId'});*/
 
 
-Cost.hasMany(Product, {as: 'Commits', foreignKey: 'post_id'});
-Cost.belongsTo(OldPrice, {as: 'Customers', foreignKey: 'CustomerId'});
 
-Product.belongsTo(Cost, {as: 'Posts', foreignKey: 'post_id'});
-Product.belongsTo(OldPrice, {as: 'Customers', foreignKey: 'CustomerId'});
-Product.belongsTo(Product, {foreignKey: 'children_comment_id', as: 'Parent'});
-Product.hasMany(Product, {foreignKey: 'children_comment_id', as: 'Children'});
+

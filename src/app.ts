@@ -26,8 +26,9 @@ class App {
     }
 
     private allRoutes(): void {
-        this.app.use('/api/v1/items', createproductSrev);//
-        this.app.use((req: Request, res: Response) => {
+        this.app.use('/api/v1/items', createproductSrev);
+        //all other URI will redirect to front end file
+        this.app.use('*',(req: Request, res: Response) => {
             res.sendFile(path.join(__dirname, '../public/index.html'));
         });
     }

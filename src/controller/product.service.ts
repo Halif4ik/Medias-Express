@@ -2,11 +2,10 @@ import {Cost} from "../models/modelsDb";
 import {HttpException} from "../interceptor/api.response.dto";
 
 export class ProductService {
-   private readonly arrHexsFaces = ['👩‍🦰'.codePointAt(0), '👨‍🦲'.codePointAt(0), '👲'.codePointAt(0), `👧`.codePointAt(0)];
 
    async createUser(reqBody): Promise<Cost> {
       try {
-         const postItem: Cost[] = await Cost.bulkCreate([{
+         const postItem: Cost = await Cost.create([{
             checked: reqBody.done === 'true',
             text: reqBody.text,
             CustomerId: req.session.customer[0].id,
@@ -16,7 +15,7 @@ export class ProductService {
             face: req.session.customer[0].face,
          }]);
 
-         return postItem[0];
+         return postItem;
       } catch (e) {
          throw new HttpException(409, 'User with this e-mail already exist in db');
       }
